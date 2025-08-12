@@ -1,4 +1,4 @@
-#Projeto Integrador IV - Monitoramento Inteligente de Plantas
+# Projeto Integrador IV - Monitoramento Inteligente de Plantas
 
 
 ## Integrantes
@@ -7,4 +7,4 @@
 - Valentina de Oliveira Leite
 
 ## Documento Visão
-[Documento Visão](https://github.com/DarkBytess/Projeto-Integrador-4-Semestre/blob/develop/docs/vision-doc.md)
+[Documento Visão](https://github.com/DarkBytess/Projeto-Integrador-4-Semestre/blob/main/docs/vision-doc.md)
