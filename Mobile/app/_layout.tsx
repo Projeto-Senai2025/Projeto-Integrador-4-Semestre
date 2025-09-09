@@ -9,8 +9,18 @@ export default function RootLayout() {
   return (
     <>
       <Stack screenOptions={{ headerShown: false }}>
+        {/* Login */}
         <Stack.Screen name="login" options={{ headerShown: false }} />
+
+        {/* Abas */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+        {/* 🔔 Histórico de Notificações (app/notifications/index.tsx) */}
+        <Stack.Screen
+          name="notifications/index"
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
