@@ -15,10 +15,20 @@ export default function RootLayout() {
         {/* Abas */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-        {/* 🔔 Histórico de Notificações (app/notifications/index.tsx) */}
+        {/*Histórico de notificação */}
         <Stack.Screen
           name="notifications/index"
           options={{ headerShown: false }}
+        />
+
+       {/*Gerenciamento de estufas*/}
+        <Stack.Screen
+          name="estufas/manage"
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
         />
 
         <Stack.Screen name="+not-found" />
