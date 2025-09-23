@@ -24,7 +24,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Início',
+          title: '',
           tabBarIcon: ({ color, size }) => (
             <Home size={size} color={color} />
           ),
@@ -33,7 +33,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="medicao"
         options={{
-          title: 'Medição',
+          title: '',
           tabBarIcon: ({ color, size }) => (
             <Activity size={size} color={color} />
           ),
@@ -42,7 +42,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: 'Dashboard',
+          title: '',
           tabBarIcon: ({ color, size }) => (
             <BarChart3 size={size} color={color} />
           ),
@@ -51,7 +51,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="relatorio"
         options={{
-          title: 'Relatório',
+          title: '',
           tabBarIcon: ({ color, size }) => (
             <FileText size={size} color={color} />
           ),
@@ -60,7 +60,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="perfil"
         options={{
-          title: 'Perfil',
+          title: '',
           tabBarIcon: ({ color, size }) => (
             <User size={size} color={color} />
           ),
