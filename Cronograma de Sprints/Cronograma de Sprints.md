@@ -37,8 +37,7 @@ Preparação para a *Entrega Parcial*.
 *Objetivo:*  
 - Implementar funcionalidades principais no Mobile e Backend.  
 - Integração com banco de dados.  
-- Deploy inicial na AWS.  
-- Relatório de segurança inicial.  
+- Deploy inicial na AWS.    
 - Testes básicos mobile, backend e frontend.  
 
 *Entrega oficial:*  
