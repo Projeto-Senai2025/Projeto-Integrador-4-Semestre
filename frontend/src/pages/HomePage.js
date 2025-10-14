@@ -23,7 +23,7 @@ const HomePage = () => {
   }, []);
 
   // Simulação de leitura de temperatura (pode vir da sua API depois)
-  useEffect(() => {
+  /*useEffect(() => {
     const interval = setInterval(() => {
       const randomTemp = Math.floor(Math.random() * 45); // Gera temperatura aleatória 0-45
       setTemperature(randomTemp);
@@ -37,7 +37,7 @@ const HomePage = () => {
     if (temperature > 30) { // aqui você define o limite
       alert(`🚨 Atenção: Temperatura atingiu ${temperature}°C! Necessário cuidado imediato.`);
     }
-  }, [temperature]);
+  }, [temperature]);*/
 
   return (
     <div style={{ position: 'relative', padding: '1.5rem' }}>

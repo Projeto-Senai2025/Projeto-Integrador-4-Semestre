@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import NavigationMenu from './components/NavigationMenu/NavigationMenu';
 import HomePage from './pages/HomePage';
@@ -8,70 +7,63 @@ import CardsPage from './pages/CardsPage';
 import ChartsPage from './pages/ChartsPage';
 import ReportsPage from './pages/ReportsPage';
 import UserPage from './pages/UserPage';
-import NotificacoesPage from './pages/NotificacoesPage';
- 
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
- 
-  // Verifica se o usuário está autenticado ao carregar a aplicação
-  useEffect(() => {
-    const storedAuth = localStorage.getItem('isAuthenticated');
-    if (storedAuth === 'true') {
-      setIsAuthenticated(true);
-    }
-  }, []);
- 
-  // Função para autenticar o usuário usando a API
+
+  /**
+   * Função para autenticar o usuário.
+   * FUTURAMENTE: substituir a lógica fictícia por uma chamada à API.
+   * 
+   * Exemplo de integração com API:
+   * - Substitua `URL_DA_API` pela URL correta de autenticação.
+   * - Envie `username` e `password` para verificação.
+   */
   const handleLogin = async ({ username, password }) => {
-    try {
-      const response = await axios.get('http://localhost:5271/api/Login');
-      const data = response.data;
- 
-      // Verifica se existe um usuário com as credenciais fornecidas
-      const user = data.find((user) => user.nome === username && user.senha === password);
- 
-      if (user) {
-        setIsAuthenticated(true);
-        localStorage.setItem('isAuthenticated', 'true'); // Salva o estado de autenticação
-      } else {
-        alert('Credenciais incorretas');
-      }
-    } catch (error) {
-      console.error("Erro de autenticação:", error);
-      alert('Erro ao tentar autenticar');
+    // Simulação de autenticação com credenciais fictícias "admin"
+    if (username === 'admin' && password === 'admin') {
+      setIsAuthenticated(true);
+    } else {
+      // Código para chamada da API
+      // try {
+      //   const response = await fetch('URL_DA_API/login', {
+      //     method: 'POST',
+      //     headers: { 'Content-Type': 'application/json' },
+      //     body: JSON.stringify({ username, password }),
+      //   });
+      //   
+      //   if (!response.ok) throw new Error('Credenciais incorretas');
+      //   const data = await response.json();
+      //   setIsAuthenticated(true); // Autentica usuário com sucesso
+      // } catch (error) {
+      //   alert('Erro de autenticação'); // Exibe mensagem de erro
+      // }
+      alert('Credenciais incorretas');
     }
   };
- 
-  // Função para fazer logout e limpar o estado de autenticação
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('isAuthenticated'); // Remove o estado de autenticação
-  };
- 
+
   return (
-<Router>
-<div style={{ display: 'flex' }}>
-        {isAuthenticated && <NavigationMenu onLogout={handleLogout} />}
-<div style={{ flex: 1, padding: '2rem' }}>
-<Routes>
+    <Router>
+      <div style={{ display: 'flex' }}>
+        {isAuthenticated && <NavigationMenu />}
+        <div style={{ flex: 1, padding: '2rem' }}>
+          <Routes>
             {isAuthenticated ? (
-<>
-<Route path="/" element={<HomePage />} />
-<Route path="/notificacoes" element={<NotificacoesPage />} />
-<Route path="/cards" element={<CardsPage />} />
-<Route path="/charts" element={<ChartsPage />} />
-<Route path="/reports" element={<ReportsPage />} />
-<Route path="/user" element={<UserPage />} />
-<Route path="*" element={<Navigate to="/" />} /> {/* Redireciona para HomePage se a rota não existir */}
-</>
+              <>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/cards" element={<CardsPage />} />
+                <Route path="/charts" element={<ChartsPage />} />
+                <Route path="/reports" element={<ReportsPage />} />
+                <Route path="/user" element={<UserPage />} />
+              </>
             ) : (
-<Route path="*" element={<LoginPage onLogin={handleLogin} />} />
+              <Route path="*" element={<LoginPage onLogin={handleLogin} />} />
             )}
-</Routes>
-</div>
-</div>
-</Router>
+          </Routes>
+        </div>
+      </div>
+    </Router>
   );
 }
- 
+
 export default App;
