@@ -1,108 +1,221 @@
-import React from 'react';
-import { SafeAreaView, View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import { router } from 'expo-router';
-import { Bell } from 'lucide-react-native';
+import { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { Activity, TriangleAlert as AlertTriangle, ChartBar as BarChart3, LogOut } from 'lucide-react-native';
+import { useAuthStore } from '@/store/authStore';
+import { sensorsService } from '@/services/sensors';
+import { alertsService } from '@/services/alerts';
+import { Sensor, Alerta } from '@/types';
+import DashboardCard from '@/components/DashboardCard';
 
-export default function InicioScreen() {
-  const goToNotifications = () => router.push('/notifications');
+export default function Dashboard() {
+  const router = useRouter();
+  const { user, logout } = useAuthStore();
+
+  const [sensores, setSensores] = useState<Sensor[]>([]);
+  const [alertas, setAlertas] = useState<Alerta[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState('');
+
+  const loadData = async () => {
+    try {
+      setError('');
+      const [sensoresData, alertasData] = await Promise.all([
+        sensorsService.getAll(),
+        alertsService.getAtivos(),
+      ]);
+      setSensores(sensoresData);
+      setAlertas(alertasData);
+    } catch (err: any) {
+      setError('Erro ao carregar dados');
+    } finally {
+      setIsLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    loadData();
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    router.replace('/login');
+  };
+
+  const alertasCriticos = alertas.filter((a) => a.nivel === 'CRITICAL').length;
+  const alertasWarning = alertas.filter((a) => a.nivel === 'WARNING').length;
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0066cc" />
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header com sininho */}
+    <ScrollView
+      style={styles.container}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Início</Text>
-        <Pressable
-          onPress={goToNotifications}
-          hitSlop={10}
-          style={styles.bellBtn}
-          accessibilityLabel="Abrir notificações"
-          accessibilityRole="button"
-        >
-          <Bell size={20} color="#065F46" />
-        </Pressable>
+        <View>
+          <Text style={styles.greeting}>Olá, {user?.nome}!</Text>
+          <Text style={styles.role}>{user?.role}</Text>
+        </View>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+          <LogOut size={24} color="#666" />
+        </TouchableOpacity>
       </View>
 
-      {/* Conteúdo centralizado */}
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Card clicável */}
-        <Pressable style={styles.card} onPress={goToNotifications}>
-          <Text style={styles.cardTitle}>
-            Bem-vindo à sua plataforma de monitoramento para estufas inteligentes!
-          </Text>
-          <Text style={styles.cardText}>
-            Aqui, você acompanha temperatura, umidade do ar e do solo para um cultivo ideal.
-          </Text>
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Estufa Inteligente</Text>
-            <Text style={styles.infoRow}>Temperatura atual: <Text style={styles.infoValue}>25°C</Text></Text>
-          </View>
+      <View style={styles.cards}>
+        <DashboardCard
+          title="Sensores Ativos"
+          value={sensores.length}
+          icon={Activity}
+          color="#0066cc"
+          onPress={() => router.push('/(tabs)/sensores')}
+        />
 
-          <View style={styles.bullets}>
-            <Text style={styles.bullet}>• Monitora e ajusta a umidade do ar de acordo com as necessidades das plantas.</Text>
-            <Text style={styles.bullet}>• Gerencia a irrigação e a umidade do solo para evitar desperdícios e otimizar o crescimento.</Text>
-          </View>
+        <DashboardCard
+          title="Alertas Críticos"
+          value={alertasCriticos}
+          icon={AlertTriangle}
+          color="#dc2626"
+          onPress={() => router.push('/(tabs)/alertas')}
+        />
 
-          <Text style={styles.hint}>
-            Para ver as notificações, toque no <Text style={styles.bold}>sininho no canto superior direito</Text>.
-          </Text>
-        </Pressable>
-      </ScrollView>
-    </SafeAreaView>
+        <DashboardCard
+          title="Avisos"
+          value={alertasWarning}
+          icon={AlertTriangle}
+          color="#f59e0b"
+          onPress={() => router.push('/(tabs)/alertas')}
+        />
+
+        <DashboardCard
+          title="Leituras Hoje"
+          value="-"
+          icon={BarChart3}
+          color="#10b981"
+          onPress={() => router.push('/(tabs)/leituras')}
+        />
+      </View>
+
+      {alertas.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Alertas Recentes</Text>
+          {alertas.slice(0, 5).map((alerta) => (
+            <View
+              key={alerta.id}
+              style={[
+                styles.alertCard,
+                {
+                  borderLeftColor: alerta.nivel === 'CRITICAL' ? '#dc2626' : '#f59e0b',
+                },
+              ]}>
+              <Text style={styles.alertType}>{alerta.tipo}</Text>
+              <Text style={styles.alertMessage}>{alerta.mensagem}</Text>
+              <Text style={styles.alertDate}>
+                {new Date(alerta.dataHora).toLocaleString('pt-BR')}
+              </Text>
+            </View>
+          ))}
+        </View>
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F0FDF4' },
-
-  header: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 6,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
   },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: '#065F46' },
-  bellBtn: {
-    width: 32, height: 32, borderRadius: 16,
-    alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(6,95,70,0.08)',
-  },
-
-  // centraliza o card
-  content: {
-    flexGrow: 1,
+  loadingContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 24,
+    backgroundColor: '#f5f5f5',
   },
-
-  // card branco
-  card: {
-    width: '90%',
-    maxWidth: 360,
+  header: {
     backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
-  cardTitle: { fontSize: 14, fontWeight: '700', color: '#111827', marginBottom: 6 },
-  cardText: { fontSize: 13, color: '#374151', lineHeight: 18, marginBottom: 12 },
-
-  section: { marginBottom: 10 },
-  sectionTitle: { fontSize: 13, fontWeight: '700', color: '#065F46', marginBottom: 4 },
-  infoRow: { fontSize: 13, color: '#374151' },
-  infoValue: { fontWeight: '700' },
-
-  bullets: { gap: 6, marginTop: 8, marginBottom: 12 },
-  bullet: { fontSize: 13, color: '#374151', lineHeight: 18 },
-
-  hint: { fontSize: 12, color: '#6B7280' },
-  bold: { fontWeight: '700' },
+  greeting: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  role: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  logoutButton: {
+    padding: 8,
+  },
+  errorText: {
+    color: '#dc2626',
+    textAlign: 'center',
+    padding: 16,
+    backgroundColor: '#fee',
+    margin: 16,
+    borderRadius: 8,
+  },
+  cards: {
+    padding: 16,
+  },
+  section: {
+    padding: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 16,
+  },
+  alertCard: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+  },
+  alertType: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 4,
+  },
+  alertMessage: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
+  },
+  alertDate: {
+    fontSize: 12,
+    color: '#999',
+  },
 });

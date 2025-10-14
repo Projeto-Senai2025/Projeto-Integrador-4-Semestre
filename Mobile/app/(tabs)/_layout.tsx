@@ -1,69 +1,40 @@
 import { Tabs } from 'expo-router';
-import { Chrome as Home, ChartBar as BarChart3, Activity, FileText, User } from 'lucide-react-native';
+import { Hop as Home, Activity, ChartBar as BarChart3, TriangleAlert as AlertTriangle } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#10B981',
-        tabBarInactiveTintColor: '#6B7280',
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: 'white',
-          borderTopWidth: 1,
-          borderTopColor: '#E5E7EB',
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '500',
-        },
+        headerShown: true,
+        tabBarActiveTintColor: '#0066cc',
+        tabBarInactiveTintColor: '#999',
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: '',
-          tabBarIcon: ({ color, size }) => (
-            <Home size={size} color={color} />
-          ),
+          title: 'Dashboard',
+          tabBarIcon: ({ size, color }) => <Home size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="medicao"
+        name="sensores"
         options={{
-          title: '',
-          tabBarIcon: ({ color, size }) => (
-            <Activity size={size} color={color} />
-          ),
+          title: 'Sensores',
+          tabBarIcon: ({ size, color }) => <Activity size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="dashboard"
+        name="leituras"
         options={{
-          title: '',
-          tabBarIcon: ({ color, size }) => (
-            <BarChart3 size={size} color={color} />
-          ),
+          title: 'Leituras',
+          tabBarIcon: ({ size, color }) => <BarChart3 size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="relatorio"
+        name="alertas"
         options={{
-          title: '',
-          tabBarIcon: ({ color, size }) => (
-            <FileText size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="perfil"
-        options={{
-          title: '',
-          tabBarIcon: ({ color, size }) => (
-            <User size={size} color={color} />
-          ),
+          title: 'Alertas',
+          tabBarIcon: ({ size, color }) => <AlertTriangle size={size} color={color} />,
         }}
       />
     </Tabs>
