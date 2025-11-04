@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styles from './LoginForm.module.css';
 import logo from '../../assets/logo.webp';
+import google from '../../assets/google.png';
 
 const LoginForm = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -25,6 +26,7 @@ const LoginForm = ({ onLogin }) => {
         required
         className={styles.input}
       />
+
       <input
         type="password"
         placeholder="Senha"
@@ -33,7 +35,18 @@ const LoginForm = ({ onLogin }) => {
         required
         className={styles.input}
       />
+
       <button type="submit" className={styles.button}>Entrar</button>
+
+      {/* Botão Google */}
+      <button type="button" className={styles.googleButton}>
+        <img 
+           src={google} 
+           alt="Google logo" 
+           className={styles.googleButton} 
+        />
+        Entrar com o Google
+      </button>
     </form>
   );
 };

@@ -3,7 +3,15 @@ import LoginForm from '../components/LoginForm/LoginForm';
 
 const LoginPage = ({ onLogin }) => {
   return (
-    <div style={{ display: 'flex',marginTop: '80px', justifyContent: 'center', alignItems: 'center', height: '45vh',borderRadius:'20px', backgroundColor: '#333' }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#95bb7f'
+      }}
+    >
       <LoginForm onLogin={onLogin} />
     </div>
   );
